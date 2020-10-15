@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class MetaDataCrawler : MonoBehaviour
 {
-    private const string WEBSOCKETURL = "wss://boot.worldofmogwais.com";
+    private const string WEBSOCKETURL = "wss://rpc.polkadot.io";
 
     private SubstrateClient _client;
 
@@ -19,6 +19,8 @@ public class MetaDataCrawler : MonoBehaviour
     public Text TxtButton;
 
     public Text TxtMetaData;
+
+    public Text Text1, Text2, Text3;
 
     private Task _awaitableTask;
 
@@ -45,7 +47,6 @@ public class MetaDataCrawler : MonoBehaviour
                 ImgConnect.color = Color.red;
                 TxtConnect.text = "Off";
                 TxtButton.text = "Connect";
-
             }
             
             _awaitableTask = null;
@@ -56,6 +57,12 @@ public class MetaDataCrawler : MonoBehaviour
     {
         _client = new SubstrateClient(new Uri(WEBSOCKETURL));
         await _client.ConnectAsync();
+
+        Text1.text = await _client.System.NameAsync();
+
+        Text2.text = await _client.System.VersionAsync();
+
+        Text3.text = await _client.System.ChainAsync();
     }
 
     private async Task CloseAsync()
@@ -69,10 +76,15 @@ public class MetaDataCrawler : MonoBehaviour
         if (_client != null && _client.IsConnected)
         {
             _awaitableTask = CloseAsync();
+            TxtMetaData.text = "";
+            Text1.text = "";
+            Text2.text = "";
+            Text3.text = "";
         }
         else
         {
             _awaitableTask = ConnectAsync();
+
         }
 
     }
